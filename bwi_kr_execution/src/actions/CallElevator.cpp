@@ -59,6 +59,9 @@ void CallElevator::run() {
   
       std::vector<bwi_kr_execution::AspFluent>::const_iterator facingDoorIt = 
         find_if(csq.response.answer.fluents.begin(), csq.response.answer.fluents.end(), IsFluentFacing());
+                
+        ros::ServiceClient client = n.serviceClient<bwi_kr_execution::speak_message>("speak_message");
+        bwi_ke_execution::SpeakMessage srv;
 
       if (facingDoorIt == csq.response.answer.fluents.end()) {
         ROS_ERROR("CallElevator: Unable to ascertain which elevator door the robot is facing!");
@@ -74,6 +77,9 @@ void CallElevator::run() {
           // Make sure that this is one of the elevator doors.
           std::vector<std::string> door_is_open;
           door_is_open.push_back("Door is open");
+          srv.request.message = "Could you call the elevator to go " + direction_text + 
+                                   ", and then let me know when the door in front of me opens?";
+          client.call(srv);
           askToCallElevator.reset(new CallGUI("askToCallElevator", 
                                               CallGUI::CHOICE_QUESTION,  
                                               "Could you call the elevator to go " + direction_text + 
@@ -91,7 +97,6 @@ void CallElevator::run() {
       int response_idx = askToCallElevator->getResponseIndex();
       if (response_idx == 0) {
 
-        ros::NodeHandle n;
         ros::ServiceClient krClient = n.serviceClient<bwi_kr_execution::UpdateFluents> ( "update_fluents" );
         krClient.waitForExistence();
         bwi_kr_execution::UpdateFluents uf;
@@ -101,6 +106,11 @@ void CallElevator::run() {
         uf.request.fluents.push_back(open_door);
 
         krClient.call(uf);
+                  
+
+        
+        srv.request.message = "Thanks! Would you mind helping me inside the elevator as well?";
+        clinet.call(srv);
 
         CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Would you mind helping me inside the elevator as well?");
         thanks.run();
