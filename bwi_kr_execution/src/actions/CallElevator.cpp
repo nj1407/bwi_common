@@ -4,7 +4,7 @@
 
 #include "ActionFactory.h"
 #include "../StaticFacts.h"
-
+#include "bwi_services/SpeakMessage.h"
 #include "bwi_kr_execution/CurrentStateQuery.h"
 #include "bwi_kr_execution/UpdateFluents.h"
 #include "ros/console.h"
@@ -26,7 +26,9 @@ struct IsFluentFacing {
 };
 
 void CallElevator::run() {
-  
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
+  bwi_services::SpeakMessage srv;
   if(!asked && !done) {
     std::string direction_text = (going_up) ? "up" : "down";
 
@@ -49,7 +51,6 @@ void CallElevator::run() {
     } else {
 
       // Figure out which of the doors we're facing.
-      ros::NodeHandle n;
       ros::ServiceClient krClient = n.serviceClient<bwi_kr_execution::CurrentStateQuery> ( "current_state_query" );
       krClient.waitForExistence();
 
@@ -59,9 +60,6 @@ void CallElevator::run() {
   
       std::vector<bwi_kr_execution::AspFluent>::const_iterator facingDoorIt = 
         find_if(csq.response.answer.fluents.begin(), csq.response.answer.fluents.end(), IsFluentFacing());
-                
-        ros::ServiceClient client = n.serviceClient<bwi_kr_execution::speak_message>("speak_message");
-        bwi_ke_execution::SpeakMessage srv;
 
       if (facingDoorIt == csq.response.answer.fluents.end()) {
         ROS_ERROR("CallElevator: Unable to ascertain which elevator door the robot is facing!");
@@ -110,7 +108,7 @@ void CallElevator::run() {
 
         
         srv.request.message = "Thanks! Would you mind helping me inside the elevator as well?";
-        clinet.call(srv);
+        client.call(srv);
 
         CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Would you mind helping me inside the elevator as well?");
         thanks.run();
