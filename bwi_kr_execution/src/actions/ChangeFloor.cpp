@@ -6,6 +6,7 @@
 #include "../StaticFacts.h"
 
 #include "bwi_kr_execution/UpdateFluents.h"
+#include "bwi_services/SpeakMessage.h"
 #include "ros/console.h"
 #include "ros/ros.h"
 
@@ -43,6 +44,15 @@ void ChangeFloor::run() {
     } else {
       std::vector<std::string> options;
       options.push_back("Reached!");
+      
+      ros::NodeHandle n;
+      ros::ServiceClient client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
+	  bwi_services::SpeakMessage srv;
+	  
+	  srv.request.message = "Could you press the button for floor " + dest_floor + 
+                                           ", and then let me know when the elevator arrives there?";
+	  client.call(srv);
+      
       askToChangeFloor.reset(new CallGUI("askToChangeFloor", 
                                          CallGUI::CHOICE_QUESTION,  
                                          "Could you press the button for floor " + dest_floor + 
