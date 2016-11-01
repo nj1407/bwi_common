@@ -3,7 +3,6 @@
 #include "ActionFactory.h"
 
 #include "bwi_kr_execution/CurrentStateQuery.h"
-#include "bwi_services/SpeakMessage.h"
 
 #include <ros/console.h>
 #include <ros/ros.h>
@@ -66,12 +65,6 @@ void GoThrough::run() {
                     
   if(!error && atIt != csq.response.answer.fluents.end()) 
     failed = initialPosition == atIt->variables[0];
-  
-  ros::ServiceClient client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
-  bwi_services::SpeakMessage srv;
-  
-  srv.request.message = "Please move away from the door while I get into the elevator.";
-  client.call(srv);
   
 }
 
