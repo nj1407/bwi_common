@@ -15,7 +15,7 @@ namespace bwi_krexec {
 CallElevator::CallElevator() :
             done(false),
             asked(false),
-            failed(false) {}
+            failed(false){}
 
 struct IsFluentFacing {
  
@@ -26,6 +26,7 @@ struct IsFluentFacing {
 };
 
 void CallElevator::run() {
+  ros::Time startTime;
   ros::NodeHandle n;
   ros::ServiceClient client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
   bwi_services::SpeakMessage srv;
@@ -77,7 +78,14 @@ void CallElevator::run() {
           door_is_open.push_back("Door is open");
           srv.request.message = "Could you call the elevator to go " + direction_text + 
                                    ", and then let me know when the door in front of me opens?";
-          client.call(srv);
+		  
+		  
+		  startTime = ros::Time::now();
+		   
+		  if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
+				client.call(srv);
+          }
+          
           askToCallElevator.reset(new CallGUI("askToCallElevator", 
                                               CallGUI::CHOICE_QUESTION,  
                                               "Could you call the elevator to go " + direction_text + 
@@ -105,11 +113,17 @@ void CallElevator::run() {
 
         krClient.call(uf);
                   
-
+		
+          
         
         srv.request.message = "Thanks! Would you mind helping me inside the elevator as well?";
-        client.call(srv);
-
+        
+		startTime = ros::Time::now();
+		   
+		if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
+				client.call(srv);
+        }
+       
         CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Would you mind helping me inside the elevator as well?");
         thanks.run();
       } else {

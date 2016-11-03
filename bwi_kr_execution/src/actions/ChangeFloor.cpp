@@ -21,7 +21,7 @@ ChangeFloor::ChangeFloor() :
              failed(false) {}
 
 void ChangeFloor::run() {
-  
+  ros::Time startTime;
   if(!asked) {
 
     // Get the doors for this elevator.
@@ -51,7 +51,11 @@ void ChangeFloor::run() {
 	  
 	  srv.request.message = "Could you press the button for floor " + dest_floor + 
                                            ", and then let me know when the elevator arrives there?";
-	  client.call(srv);
+	  startTime = ros::Time::now();
+		   
+	  if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
+				client.call(srv);
+      }
       
       askToChangeFloor.reset(new CallGUI("askToChangeFloor", 
                                          CallGUI::CHOICE_QUESTION,  
@@ -126,7 +130,19 @@ void ChangeFloor::run() {
           uf.request.fluents.push_back(beside_door);
           uf.request.fluents.push_back(at_loc);
           krClient.call(uf);
-
+		  
+		  ros::ServiceClient client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
+		  bwi_services::SpeakMessage srv;
+		  
+		  srv.request.message = "Thanks! Could you keep the door open while I exit the elevator?";
+		  
+		  startTime = ros::Time::now();
+		   
+		  if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
+				client.call(srv);
+		  }
+		  
+		  
           CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Could you keep the door open while I exit the elevator?");
           thanks.run();
         }
