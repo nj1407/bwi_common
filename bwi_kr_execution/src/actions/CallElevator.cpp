@@ -116,7 +116,7 @@ void CallElevator::run() {
           //end edit
           
           srv.request.message = "Could you call the elevator to go " + direction_text + 
-                                   ", and then let me know when the door in front of me opens?";
+                                   ", and then let me know when the door in front of me opens? Thanks! Could you keep the door open while I enter the elevator?";
 		  
 		  
 		  //startTime = ros::Time::now();
@@ -128,7 +128,7 @@ void CallElevator::run() {
           askToCallElevator.reset(new CallGUI("askToCallElevator", 
                                               CallGUI::CHOICE_QUESTION,  
                                               "Could you call the elevator to go " + direction_text + 
-                                              ", and then let me know when the door in front of me opens?", 
+                                              ", and then let me know when the door in front of me opens?  Thanks! Could you keep the door open while I enter the elevator?", 
                                               120.0f, 
                                               door_is_open));
           askToCallElevator->run();

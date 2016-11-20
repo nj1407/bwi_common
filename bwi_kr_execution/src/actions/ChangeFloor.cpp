@@ -50,7 +50,7 @@ void ChangeFloor::run() {
 	  bwi_services::SpeakMessage srv;
 	  
 	  srv.request.message = "Could you press the button for floor " + dest_floor + 
-                                           ", and then let me know when the elevator arrives there?";
+                                           ", and then let me know when the elevator arrives there?  Please keep the door open for me.";
 	  startTime = ros::Time::now();
 		   
 	  if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
@@ -60,7 +60,7 @@ void ChangeFloor::run() {
       askToChangeFloor.reset(new CallGUI("askToChangeFloor", 
                                          CallGUI::CHOICE_QUESTION,  
                                          "Could you press the button for floor " + dest_floor + 
-                                           ", and then let me know when the elevator arrives there?", 
+                                           ", and then let me know when the elevator arrives there?  Please keep the door open for me.", 
                                          120.0f, 
                                          options));
       askToChangeFloor->run();
