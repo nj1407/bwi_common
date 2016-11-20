@@ -50,8 +50,8 @@ OpenDoor::OpenDoor() :
 
 
 void OpenDoor::run() {
-	
-	/* stuff added */
+    
+    /* stuff added */
   ros::NodeHandle n;
 
   ros::ServiceClient speak_message_client = n.serviceClient<bwi_services::SpeakMessage>("/speak_message_service/speak_message");
@@ -60,11 +60,11 @@ void OpenDoor::run() {
   actionlib::SimpleActionClient<bwi_msgs::LEDControlAction> ac("led_control_server", true);
   ac.waitForServer();
   bwi_msgs::LEDControlGoal goal;
-	//end edit
-	
+    //end edit
+    
   if(!asked) {
-	//added  
-	goal.type.led_animations = bwi_msgs::LEDAnimations::NEED_ASSIST;
+    //added  
+    goal.type.led_animations = bwi_msgs::LEDAnimations::NEED_ASSIST;
     goal.timeout = ros::Duration(0);
     ac.sendGoal(goal);
 
@@ -113,14 +113,14 @@ void OpenDoor::run() {
   }
   
   if(open) {
-	
-	//edit
-	ac.cancelAllGoals();
+    
+    //edit
+    ac.cancelAllGoals();
 
     speak_srv.request.message = "Thanks!";
     speak_message_client.call(speak_srv);
     //end edit  
-	  
+      
     CallGUI askToOpen("thank", CallGUI::DISPLAY,  "Thanks!");
     askToOpen.run();
     done = true;

@@ -116,19 +116,19 @@ void CallElevator::run() {
           //end edit
           
           srv.request.message = "Could you call the elevator to go " + direction_text + 
-                                   ", and then let me know when the door in front of me opens? Thanks! Could you keep the door open while I enter the elevator?";
-		  
-		  
-		  //startTime = ros::Time::now();
-		   
-		 // if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
-				client.call(srv);
+                                   ", and then let me know using my screen when the door in front of me opens? Thanks! Could you keep the door open while I enter the elevator?";
+          
+          
+          //startTime = ros::Time::now();
+           
+         // if(!done && (ros::Time::now() - startTime) > ros::Duration(15.0)) {
+                client.call(srv);
           //}
           
           askToCallElevator.reset(new CallGUI("askToCallElevator", 
                                               CallGUI::CHOICE_QUESTION,  
                                               "Could you call the elevator to go " + direction_text + 
-                                              ", and then let me know when the door in front of me opens?  Thanks! Could you keep the door open while I enter the elevator?", 
+                                              ", and then let me know let me know using my screen when  the door in front of me opens?  Thanks! Could you keep the door open while I enter the elevator?", 
                                               120.0f, 
                                               door_is_open));
           askToCallElevator->run();
@@ -152,17 +152,17 @@ void CallElevator::run() {
 
         krClient.call(uf);
         
-        srv.request.message = "Thanks! Would you mind helping me inside the elevator as well?";
+        srv.request.message = "Thanks! Would you mind helping me inside the elevator by holding the door as well?";
         
-		//startTime = ros::Time::now();
-		   
-		client.call(srv);
+        //startTime = ros::Time::now();
+           
+        client.call(srv);
        
         //edit
         ac.cancelAllGoals();
         //end edit
        
-        CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Would you mind helping me inside the elevator as well?");
+        CallGUI thanks("thanks", CallGUI::DISPLAY,  "Thanks! Would you mind helping me inside the elevator by holding the door as well?");
         thanks.run();
       } else {
         // A door didn't open in the timeout specified.
