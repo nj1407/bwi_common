@@ -524,7 +524,8 @@ inside(o2_600_entrance,l2_100).
 object(o2_100_center).
 inside(o2_100_center,l2_100).
 
-
+object(o3_200_elevator_panel).
+inside(o3_200_elevator_panel,l3_200).
 
 object(o3_434_soccer).
 inside(o3_434_soccer,l3_434).
